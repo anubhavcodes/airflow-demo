@@ -42,12 +42,26 @@ RUN set -ex \
     && pip install pytz \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
-    && pip install pyasn1 
-    
+    && pip install pyasn1
+
 RUN pip install apache-airflow==$AIRFLOW_VERSION
+
+RUN apt-get purge --auto-remove -yqq $buildDeps \
+    && apt-get autoremove -yqq --purge \
+    && apt-get clean \
+    && rm -rf \
+        /var/lib/apt/lists/* \
+        /tmp/* \
+        /usr/share/man \
+        /usr/share/doc \
+        /usr/share/doc-base
 
 COPY scripts/entrypoint.sh /entrypoint.sh
 
+RUN chown -R airflow: ${AIRFLOW_HOME}
+
 EXPOSE 8080
+USER airflow
+WORKDIR ${AIRFLOW_HOME}
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD ["webserver"]
