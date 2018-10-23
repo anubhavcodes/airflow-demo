@@ -57,6 +57,7 @@ RUN apt-get purge --auto-remove -yqq $buildDeps \
         /usr/share/doc-base
 
 COPY scripts/entrypoint.sh /entrypoint.sh
+COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN chown -R airflow: ${AIRFLOW_HOME}
 
